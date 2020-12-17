@@ -83,7 +83,7 @@ export default {
 
       //中间部分
       obj.forEach(element => {
-        res = res + this.buildSnap(layer + 1) + element.propName + this.buildSnap(layer + 2) + element.remark + "\n"
+        res = res + (this.buildSnap(layer + 1) + element.propName).padEnd(40," ") + element.remark + "\n"
         if (element.valueType == 3) {
           res = res + this.buildRemark(layer + 1, element.subData)
         }
