@@ -1,7 +1,9 @@
 
 <template>
   <div>
+    <!-- 主要组件-->
     <myData :unDecodeMsg = 'unDecodeMsg'></myData>
+    <!-- 展示结果-->
     <a-button @click="openResultView" type="primary" style="width:75%;margin-top:20px;margin-bottom:10px">
       生成代码
     </a-button>
@@ -13,7 +15,7 @@
     </a-modal>
   </div>
 </template>
- 
+
 <script>
 export default {
   data () {
@@ -43,8 +45,8 @@ export default {
     decodeTable (layer,owner,data,obj) {
       let res = this.buildSnap(layer) + owner + "." + obj.propName + " = {}\n"
       res = res + this.buildSnap(layer) + "local " + obj.propName + "Num = " + data + ":GetDataXArraySize(MsgKey." + obj.msgKey + ")\n"
-      res = res + this.buildSnap(layer) + "for i" + layer + " = 0, " + obj.propName + "Num - 1 do\n"
-      res = res + this.buildSnap(layer+1) + "local " + obj.propName + "Data = " + data + ":GetDataXArrayElement(MsgKey." + obj.msgKey + ", i" + layer + ")\n"
+      res = res + this.buildSnap(layer) + "for " + 'i'.repeat(layer+1) + " = 0, " + obj.propName + "Num - 1 do\n"
+      res = res + this.buildSnap(layer+1) + "local " + obj.propName + "Data = " + data + ":GetDataXArrayElement(MsgKey." + obj.msgKey + ", " + 'i'.repeat(layer+1) + ")\n"
       res = res + this.buildSnap(layer+1) + "local " + obj.propName + "Array = {}\n"
       obj.subData.forEach(element => {
         if (element.valueType == 3) {

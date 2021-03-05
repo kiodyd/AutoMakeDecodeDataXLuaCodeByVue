@@ -47,6 +47,21 @@
         <a-icon type="plus" /> 增加解析数据
       </a-button>
     </div>
+    <div>
+    <!-- 实验性功能，从文档复制识别-->
+    <a-button @click="openCopyView" type="danger" ghost style="width:60%;margin-top:10px">
+      从协议文档复制（实验性功能，注意复制的格式）
+    </a-button>
+    <a-modal v-model="showCopyPage" title="实验性功能" @ok="startReadData" okText="解析" width="60%">
+      <a-result title="请复制要解析的部分到文本框">
+        <a-textarea placeholder="    | KeyId | v1.0.0 | int32 | 注释 |
+      | KeyId | v1.0.0 | int64 | 注释 |
+      | KeyId | v1.0.0 | utf8-string | 注释 |
+      | KeyId | v1.0.0 | array | 注释 |"
+        :rows="4" v-model="inputText" />
+      </a-result>
+    </a-modal>
+    </div>
   </a-card>
 </template>
 
@@ -63,6 +78,8 @@ export default {
       myDataXMsg: {
         valueTypes: ["int32", "int64", "utf-8", "array"],
       },
+      showCopyPage:false,
+      inputText:""
     };
   },
   methods: {
@@ -80,6 +97,49 @@ export default {
       if (index !== -1) {
         this.unDecodeMsg.splice(index, 1);
       }
+    },
+    openCopyView () {
+      this.showCopyPage = true;
+    },
+    startReadData () {
+      this.readDataFromInput(this.inputText,this.unDecodeMsg);
+      this.showCopyPage = false;
+    },
+    //从原有markdomn文档解析
+    readDataFromInput (srcData,outData) {
+      let allData = srcData.split('\n')
+      allData.forEach(d => {
+        let splitData = d.split('|')
+        if (splitData.length == 6) {
+          let _msgkey = splitData[1].trim()
+          let _valueType = 0
+          switch (splitData[3].trim().toLowerCase()) {
+            case "int32":
+              _valueType = 0
+              break;
+            case "int64":
+              _valueType = 1
+              break;
+            case "utf8-string":
+              _valueType = 2
+              break;
+            case "array":
+              _valueType = 3
+              break;
+            default:
+              _valueType = 3
+              break;
+          }
+          let _remark = splitData[4].trim()
+          outData.push({
+            propName:"",
+            msgKey:_msgkey,
+            valueType:_valueType,
+            remark:_remark,
+            subData:[]
+          })
+        }
+      });
     },
   },
 };
